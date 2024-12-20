@@ -9,5 +9,4 @@ public class QuickParkAssistApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(QuickParkAssistApplication.class, args);
 	}
-
 }
