@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Smart Parking Booking</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<style>
+	* {
+		padding: 0;
+		margin: 0;
+		box-sizing: border-box;
+		font-family: "PT Sans", Arial, Helvetica, sans-serif;
+	}
+
+	body {
+		font-family: Arial, sans-serif;
+		margin: 0;
+		padding: 0;
+		background-image: linear-gradient(to bottom, rgb(0 14 38 / 50%), rgba(52, 210, 102, 0.3)), url('template_Image.jpg');
+		background-attachment: fixed;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: cover;
+		color: #333;
+		max-height: 100vh;
+	}
+
+	nav {
+		color: white;
+		display: flex;
+		justify-content: space-between;
+		padding: 15px;
+		text-align: center;
+	}
+
+	h1 {
+		font-size: 30px;
+	}
+
+	nav {
+		text-align: center;
+	}
+
+	nav a {
+		color: white;
+		margin: 0 10px;
+		margin-top: -10px;
+		text-decoration: none;
+		font-size: 16px;
+		font-weight: 100;
+	}
+
+	.booking {
+		text-decoration: underline;
+	}
+
+	nav a:hover {
+		text-decoration: underline;
+	}
+
+	nav i {
+		margin-right: 5px;
+	}
+
+	.nav-bar {
+		text-align: center;
+		margin-top: 10px;
+	}
+
+	main {
+		padding: 20px;
+	}
+
+	.container {
+		max-height: 850px;
+		margin: 0 auto;
+		overflow: scroll;
+		background: white;
+		padding: 20px;
+		display: flex;
+		flex-direction: row;
+		overflow: auto;
+		border-radius: 5px;
+		gap: 20px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	}
+
+	.sub-container2 {
+		max-width: 80%;
+		height: inherit;
+		flex: 0.5;
+		gap: 1rem;
+		flex-direction: column;
+		margin: 0 auto;
+		overflow: scroll;
+		background: white;
+		display: flex;
+		overflow: auto;
+		border-radius: 5px;
+		gap: 20px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	}
+
+	.sub-container {
+		max-width: 20%;
+		height: inherit;
+		overflow: auto;
+		display: flex;
+		align-items: flex-start;
+		flex: 0.5;
+		gap: 1rem;
+		padding: 0 10px;
+		flex-direction: column;
+		justify-content: left;
+		background-color: grey;
+	}
+
+	.sub-container2 .heading {
+		background-color: #007bff;
+		color: white;
+	}
+
+	.sub-container a {
+		color: white;
+	}
+
+	.sub-container h2 {
+		color: white;
+	}
+
+	.menu-btns {
+		display: inline-flex;
+		flex-direction: column;
+		justify-content: left;
+		align-items: flex-start;
+		text-decoration: solid;
+		font-weight: bold;
+		gap: 1rem;
+	}
+
+	form {
+		flex: 1.25;
+		padding: 0 10px;
+	}
+
+	.form-group {
+		margin-bottom: 15px;
+		margin: 0 auto;
+	}
+
+	label {
+		display: block;
+		margin-bottom: 5px;
+		font-weight: bold;
+	}
+
+	input,
+	select,
+	button {
+		width: 100%;
+		padding: 10px;
+		margin-bottom: 10px;
+		border: 1px solid #ccc;
+		border-radius: 5px;
+	}
+
+	button {
+		background-color: #007bff;
+		color: white;
+		border: none;
+		cursor: pointer;
+	}
+
+	button:hover {
+		background-color: #0056b3;
+	}
+
+	footer {
+		text-align: center;
+		margin-top: 20px;
+		font-size: 0.9em;
+		color: black;
+		background-color: white;
+	}
+</style>
+
+<body>
+	<nav>
+		<h1>Smart Parking Booking</h1>
+		<div class="nav-bar">
+			<a href="@{/}" class="active"><i class="fas fa-home"></i>HOME</a>
+			<a href="@{/register}"><i class="fas fa-user"></i>REGISTRATION</a>
+			<a href="@{/smart-spots}"><i class="fas fa-parking"></i>SMART SPOTS</a>
+			<a href="@{/booking}" class="booking"><i class="fas fa-calendar-check"></i>BOOKING</a>
+			<a href="@{/addon-services}"><i class="fas fa-tools"></i>ADDON SERVICES</a>
+			<a href="@{/ev-charging}"><i class="fas fa-bolt"></i>EV CHARGING</a>
+			<a href="#"><i class="fa fa-search" aria-hidden="true"></i></a>
+		</div>
+	</nav>
+
+	<div class="container">
+		<div class="sub-container">
+			<div>
+				<center>
+					<h2>Book a Spot</h2>
+				</center>
+			</div>
+			<div class="menu-btns">
+				<a href="">Book Now</a>
+				<a href="">Change Booking Details</a>
+				<a href="">Booking History</a>
+				<a href="">View Booking By Mobile Number</a>
+				<a href="">View Booking By Spot</a>
+				<a href="">Cancel Booking</a>
+			</div>
+		</div>
+		<div class="sub-container2">
+			<div class="heading">
+				<center>
+					<h2>Book your Parking Spot</h2>
+				</center>
+			</div>
+			<form th:action="@{/bookingSpot/book-spot}" th:object="${bookingSpot}" method="post">
+				<div class="form-group">
+					<label for="userID">User ID:</label>
+					<input type="number" id="userID" th:field="*{userID}" class="form-control" required />
+				</div>
+				<div class="form-group">
+					<label for="spotID">Spot ID:</label>
+					<input type="number" id="spotID" th:field="*{spotID}" class="form-control" required />
+				</div>
+				<div class="form-group">
+					<label for="mobileNumber">Mobile Number:</label>
+					<input type="text" id="mobileNumber" th:field="*{mobileNumber}" class="form-control" required />
+				</div>
+				<div class="form-group">
+					<label for="duration">Duration (in hours):</label>
+					<input type="number" id="duration" th:field="*{duration}" class="form-control" required />
+				</div>
+				<div class="form-group">
+					<label for="startTime">Start Time:</label>
+					<input type="datetime-local" id="startTime" th:field="*{startTime}" class="form-control" required />
+				</div>
+				<div class="form-group">
+					<label for="estimatedPrice">Estimated Price:</label>
+					<input type="number" id="estimatedPrice" th:field="*{estimatedPrice}" class="form-control"
+						step="0.01" required />
+				</div>
+				<div class="form-group">
+					<label for="paymentMethod">Payment Method:</label>
+					<select id="paymentMethod" th:field="*{paymentMethod}" class="form-control" required>
+						<option value="CASH">Cash</option>
+						<option value="ONLINE">Online</option>
+						<option value="CHECK">Check</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="bookingSpotStatus">Booking Status:</label>
+					<select id="bookingSpotStatus" th:field="*{bookingSpotStatus}" class="form-control" required>
+						<option value="PENDING">Pending</option>
+						<option value="CONFIRMED">Confirmed</option>
+						<option value="COMPLETED">Completed</option>
+						<option value="CANCELLED">Cancelled</option>
+					</select>
+				</div>
+				<button type="submit" class="btn btn-primary">Confirm Booking</button>
+			</form>
+		</div>
+	</div>
+	<footer>
+		<p>&copy; 2024 All Rights Reserved By Smart Parking Booking</p>
+	</footer>
+</body>
+
+</html>
