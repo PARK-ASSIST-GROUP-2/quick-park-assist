@@ -5,10 +5,17 @@
     box-sizing: border-box;
 }
 body {
-    max-height: 100vh;
+    min-height: 100vh;
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
+}
+
+.container{
+    border-radius:5px;
+}
+.formSection{
+    padding:8px;
 }
 
 /* Navbar styles */
@@ -23,7 +30,15 @@ body {
     font-size: 25px;
     font-weight: 600;
 }
-
+.navbar-light .nav-link {
+    font-size:13px;
+}
+.main-row{
+    border-radius:5px;
+    min-height:100vh;
+    display: flex;
+    flex-wrap: nowrap;
+}
 /* Hover state for navbar links */
 .navbar-light .nav-link:hover {
     background-color: rgb(235, 91, 0) !important;
@@ -39,45 +54,65 @@ body {
 .nav-bar {
     flex-wrap: nowrap;
 }
-
-/* Other container styles */
-.sub-container, .sub-container2 {
-    padding: 20px 0;
-    background-color: #e3e3e3;
+.topNavbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
-
-.row {
-    margin: 0 auto;
-    max-width: 800px;
-    box-shadow: rgba(0, 0, 0, 0.5);
-}
-
-.sub-container2 {
-    padding: 20px;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-}
-
-.sub-container {
-    background: #333;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
-
-/* Menu button styling */
-.menu-btns a {
-    width: 100%;
-    display: block;
-    padding: 10px 15px;
+.sidebar {
+    background-color: rgb(60, 61, 55);
     color: white;
-    border-bottom: grey solid 1px;
-    text-decoration: none;
-    text-align: center;
-    transition: background-color 0.3s, border 0.3s;
-}
+    padding: 20px;
+    position: static;
+    max-width:240px;
+    display: flex;
+    flex-direction: column;
+  }
 
-.menu-btns a:hover {
-    background-color: rgb(40, 41, 35);
-    border: grey solid 3px;
+  .sidebar a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    margin: 15px 5px;
+  }
+
+  .sidebar a:hover {
     text-decoration: underline;
-}
+  }
+
+  .form-control {
+    border-radius: 5px;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    border: none;
+  }
+
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size:1em;
+    color: white;
+  }
+  .navbar-brand {
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 480px) {
+    .sidebar {
+      height:auto;
+      text-align: center;
+      padding: 10px;
+      margin:10px 5px;
+    }
+
+    .sidebar a {
+      display: inline-block;
+      margin: 10px 10px;
+    }
+  }

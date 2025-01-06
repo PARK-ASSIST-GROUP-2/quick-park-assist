@@ -1,7 +1,9 @@
 package com.quick_park_assist.controller;
 
 import com.quick_park_assist.entity.BookingSpot;
+import com.quick_park_assist.entity.User;
 import com.quick_park_assist.service.IModifySpotService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ParseException;
@@ -12,20 +14,35 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping("/modifySpot")
 public class ModifySpotController {
     @Autowired
     private IModifySpotService IModifyspotservice;
+    private String mobileNumber;
+    private Model model;
 
 
     @GetMapping("/")
-    public String showModifySpotForm(Model model){
-        System.out.println("Working inside modify form controller");
-        model.addAttribute("modifySpot", new BookingSpot() );
+    @Transactional
+    public String fetchConfirmedBookings(
+            HttpSession session, Model model) {
+
+        Long loggedInUser = (Long) session.getAttribute("userId");
+
+        if (loggedInUser == null) {
+            return "redirect:/login"; // Redirect to login if user is not logged in
+        }
+        this.model = model;
+        List<BookingSpot> confirmedBookings = IModifyspotservice.getConfirmedBookings(loggedInUser);
+        model.addAttribute("bookings", confirmedBookings);
+        model.addAttribute("mobileNumber", mobileNumber);
         return "ModifyBooking";
     }
+
+
     @GetMapping("/update-spot")
     public String handleGetRequest() {
         return "redirect:/modifySpot/";
@@ -35,7 +52,6 @@ public class ModifySpotController {
     @Transactional
     public String updateSpotDetails(
             @RequestParam(value = "bookingId", required=true)  Long bookingId,
-            @RequestParam(value = "userID", required=true)  Long userID,
             @RequestParam(value = "startTime",required = true) String startTimeStr,
             @RequestParam(value ="duration",required = true) Double duration,
             Model model) {
@@ -45,7 +61,7 @@ public class ModifySpotController {
 
             Date startTime = dateTimeFormatter.parse(startTimeStr);
 
-            boolean isUpdated = IModifyspotservice.updateSpotDetails(bookingId,userID, startTime, duration);
+            boolean isUpdated = IModifyspotservice.updateSpotDetails(bookingId, startTime, duration);
 
             if (isUpdated) {
                 model.addAttribute("message", "Booking updated successfully!");

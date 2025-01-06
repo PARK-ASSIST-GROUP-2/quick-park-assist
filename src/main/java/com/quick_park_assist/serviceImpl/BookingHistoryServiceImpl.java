@@ -13,7 +13,7 @@ public class BookingHistoryServiceImpl implements IBookingHistoryService {
     @Autowired
     private BookingSpotRepository bookingSpotRepository;
     @Override
-    public List<BookingSpot> getBookingsByUserIdAndMobile(Long userID, String mobileNumber) {
-        return bookingSpotRepository.findByUserIDAndMobileNumber(userID,mobileNumber);
+    public List<BookingSpot> getBookingsByuserID(Long UserID) {
+        return bookingSpotRepository.findBookingsByUserId(UserID);
     }
 }

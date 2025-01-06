@@ -2,7 +2,6 @@ package com.quick_park_assist.entity;
 
 import java.util.Date;
 
-import ch.qos.logback.core.boolex.EvaluationException;
 import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -13,6 +12,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "booking_spot")
 public class BookingSpot {
 
 
@@ -20,10 +20,26 @@ public class BookingSpot {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "booking_id")
 	private Long bookingId;
-	@Column(name = "userid")
-	private Long userID;
-	@Column(name = "spotid")
-	private Long spotID;
+
+	public ParkingSpot getSpot() {
+		return spot;
+	}
+
+	public void setSpot(ParkingSpot spot) {
+		this.spot = spot;
+	}
+
+	@Transient
+	private ParkingSpot spot;
+
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
+	User user;
+	@ManyToOne
+	@JoinColumn(name = "spotId",nullable = false)
+	ParkingSpot spotID;
+	@Column
+	private String spotLocation; // Ensure this field exists
 	@Column(name = "mobile_number")
 	private String mobileNumber;
 	private Double duration;
@@ -37,27 +53,35 @@ public class BookingSpot {
 	@Column(name = "booking_status")// Stores enum as a String (e.g., "BOOKED"
 	private BookingSpotStatus bookingSpotStatus = BookingSpotStatus.CONFIRMED;
 
-	public Long getUserID() {
-		return userID;
-	}
-
-	public void setUserID(Long userID) {
-		this.userID = userID;
-	}
 	public Long getBookingId() {
 		return bookingId;
+	}
+	public ParkingSpot getSpotId() {
+		return spotID;
+	}
+
+	public String getSpotLocation() {
+		return spotLocation;
+	}
+
+	public void setSpotLocation(String spotLocation) {
+		this.spotLocation = spotLocation;
+	}
+
+	public void setSpotId(ParkingSpot parkingSpot) {
+		this.spotID = parkingSpot;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public void setBookingId(Long bookingId) {
 		this.bookingId = bookingId;
-	}
-
-	public Long getSpotID() {
-		return spotID;
-	}
-
-	public void setSpotID(Long spotID) {
-		this.spotID = spotID;
 	}
 
 	public String getMobileNumber() {
@@ -107,7 +131,6 @@ public class BookingSpot {
 	public void setBookingSpotStatus(BookingSpotStatus bookingSpotStatus) {
 		this.bookingSpotStatus = bookingSpotStatus;
 	}
-
 
 }
 

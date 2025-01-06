@@ -5,5 +5,5 @@ import com.quick_park_assist.entity.BookingSpot;
 import java.util.List;
 
 public interface IBookingHistoryService {
-     List<BookingSpot> getBookingsByUserIdAndMobile(Long userID, String mobileNumber);
+     List<BookingSpot> getBookingsByuserID(Long UserID);
 }
