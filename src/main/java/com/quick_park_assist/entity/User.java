@@ -1,6 +1,9 @@
 package com.quick_park_assist.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +21,9 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String email;
+
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "^\\d{10}$", message = "Please provide a valid 10-digit phone number")
 
     @Column(nullable = false)
     private String phoneNumber;

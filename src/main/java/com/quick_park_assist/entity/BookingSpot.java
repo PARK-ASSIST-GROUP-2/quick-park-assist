@@ -38,11 +38,14 @@ public class BookingSpot {
 	@ManyToOne
 	@JoinColumn(name = "spotId",nullable = false)
 	ParkingSpot spotID;
+
 	@Column
 	private String spotLocation; // Ensure this field exists
 	@Column(name = "mobile_number")
 	private String mobileNumber;
 	private Double duration;
+
+
 	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	private Date startTime;
 	private Double estimatedPrice;
@@ -60,7 +63,7 @@ public class BookingSpot {
 		return spotID;
 	}
 
-	public String getSpotLocation() {
+	public String	 getSpotLocation() {
 		return spotLocation;
 	}
 

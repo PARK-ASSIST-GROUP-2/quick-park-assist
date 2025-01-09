@@ -27,15 +27,8 @@
         <li class="nav-item">
           <a class="nav-link text-dark" th:href="@{/}" aria-current="page">HOME</a>
         </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            REGISTER
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" th:href="@{/register}">Register</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" th:href="@{/login}">Login</a></li>
-          </ul>
+        <li class="nav-item">
+          <a class="nav-link text-dark" th:href="@{/dashboard}">DASHBOARD</a>
         </li>
         <li class="nav-item">
           <a class="nav-link text-dark" th:href="@{/smart-spots/add-spot}">SMARTSPOTS</a>
@@ -44,7 +37,7 @@
           <a class="nav-link text-dark" th:href="@{/bookingSpot/}">BOOKING</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-dark" th:href="@{/addon-services}">ADDON SERVICES</a>
+          <a class="nav-link text-dark" th:href="@{/addon/new}">ADDON SERVICES</a>
         </li>
         <li class="nav-item">
           <a class="nav-link text-dark" th:href="@{/ev-charging/list}">EV CHARGING</a>
@@ -104,7 +97,6 @@
           <ul class="list-group mt-3" id="resultsList" style="cursor: pointer;"></ul>
         </div>
 
-
         <!-- Mobile Number Field -->
         <div class="form-group mb-3">
           <label for="mobileNumber">Mobile Number:</label>
@@ -122,7 +114,7 @@
         </div>
         <div class="form-group mb-3">
           <label for="estimatedPrice">Estimated Price:</label>
-          <input type="number" id="estimatedPrice" th:field="*{estimatedPrice}" class="form-control" step="0.01" required />
+          <input type="number" id="estimatedPrice" th:field="*{estimatedPrice}" class="form-control" step="0.01"  readonly />
           <div class="invalid-feedback">Please enter an estimated price.</div>
         </div>
         <div class="form-group mb-3">
@@ -144,48 +136,70 @@
 <footer class="text-center">
   &copy; 2024 All Rights Reserved by Smart Parking Spots
 </footer>
-<script>document.getElementById("locationInput").addEventListener("input", function () {
-    const query = this.value.trim(); // Get user input
+<script>
+  // Function to fetch pricePerHour and update estimated price
+  function updateEstimatedPrice() {
+      const spotId = document.getElementById("spotId").value;
+      const duration = document.getElementById("duration").value;
 
-    if (query.length < 2) {
-        document.getElementById("resultsList").innerHTML = ""; // Clear suggestions
-        return;
-    }
+      if (spotId && duration) {
+          fetch(`/bookingSpot/get-price-per-hour?spotId=` + encodeURIComponent(spotId))
+              .then((response) => response.json())
+              .then((data) => {
+                  const pricePerHour = data.pricePerHour;
+                  const estimatedPrice = pricePerHour * duration;
+                  document.getElementById("estimatedPrice").value = estimatedPrice.toFixed(2); // Update the field
+              })
+              .catch((error) => console.error("Error fetching price per hour:", error));
+      }
+  }
 
-    // Fetch matching parking spots from the backend
-    fetch(`/smart-spots/searching?query=` + encodeURIComponent(query))
-        .then((response) => response.json())
-        .then((data) => {
-            let resultsList = document.getElementById("resultsList");
-            resultsList.innerHTML = ""; // Clear previous suggestions
-
-            // Populate suggestions dynamically based on data
-            data.forEach((item) => {
-                let li = document.createElement("li");
-                li.className = "list-group-item";
-
-                // Display Spot ID and Location
-                li.textContent = `SPOTID: ${item.id} - (${item.spotLocation}) -  (${item.location})`;
-
-                // Add click event to auto-fill input field and hidden fields
-                li.addEventListener("click", function () {
-                    // Update the visible input field
-                    document.getElementById("locationInput").value = `SPOTID: ${item.id} - ${item.spotLocation} - (${item.location})`;
-
-                    // Update hidden fields
-                    document.getElementById("spotId").value = item.id;
-                    document.getElementById("spotLocation").value = item.spotLocation;
+  // Add event listener to the duration field
+  document.getElementById("duration").addEventListener("input", updateEstimatedPrice);
 
 
-                    // Clear the suggestions list
-                    resultsList.innerHTML = "";
-                });
+      document.getElementById("locationInput").addEventListener("input", function () {
+      const query = this.value.trim(); // Get user input
 
-                resultsList.appendChild(li); // Append suggestion
-            });
-        })
-        .catch((error) => console.error("Error fetching results:", error));
-});
+      if (query.length < 2) {
+          document.getElementById("resultsList").innerHTML = ""; // Clear suggestions
+          return;
+      }
+
+      // Fetch matching parking spots from the backend
+      fetch(`/smart-spots/searching?query=` + encodeURIComponent(query))
+          .then((response) => response.json())
+          .then((data) => {
+              let resultsList = document.getElementById("resultsList");
+              resultsList.innerHTML = ""; // Clear previous suggestions
+
+              // Populate suggestions dynamically based on data
+              data.forEach((item) => {
+                  let li = document.createElement("li");
+                  li.className = "list-group-item";
+
+                  // Display Spot ID and Location
+                  li.textContent = `SPOTID: ${item.id} - (${item.spotLocation}) -  (${item.location})`;
+
+                  // Add click event to auto-fill input field and hidden fields
+                  li.addEventListener("click", function () {
+                      // Update the visible input field
+                      document.getElementById("locationInput").value = `SPOTID: ${item.id} - ${item.spotLocation} - (${item.location})`;
+
+                      // Update hidden fields
+                      document.getElementById("spotId").value = item.id;
+                      document.getElementById("spotLocation").value = item.spotLocation;
+
+
+                      // Clear the suggestions list
+                      resultsList.innerHTML = "";
+                  });
+
+                  resultsList.appendChild(li); // Append suggestion
+              });
+          })
+          .catch((error) => console.error("Error fetching results:", error));
+      });
 
 
 </script>

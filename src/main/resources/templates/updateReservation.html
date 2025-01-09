@@ -13,7 +13,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- CSS file -->
     <link rel="stylesheet"  type="text/css" th:href="@{/css/style.css}">
-   <title>Smart Parking Spots - My Vehicles</title>
+    <title>Smart Parking Spots - My Vehicles</title>
 </head>
 <body th:style="'background: linear-gradient( rgb(0 14 38  / 70%), rgba(6 26 79 / 48%)),
                 url('+ @{/images/bgImage.jpg }+') no-repeat center center/cover; background-attachment:fixed;'">
@@ -32,7 +32,6 @@
                 <li class="nav-item">
                     <a class="nav-link text-dark" th:href="@{/dashboard}">DASHBOARD</a>
                 </li>
-
                 <li class="nav-item">
                     <a class="nav-link text-dark" th:href="@{/smart-spots/add-spot}">SMARTSPOTS</a>
                 </li>
@@ -173,7 +172,7 @@
                                 <p>Are you sure you want to delete this vehicle?</p>
                             </div>
                             <div class="modal-footer">
-                                <form th:action="@{/vehicles/delete/{id}(id=${vehicle.id})}" method="post">
+                                <form th:action="@{/ec-charging/delete/{id}(id=${vehicle.id})}" method="post">
                                     <input type="hidden" name="id" th:value="${vehicle.id}" />
                                     <button type="submit" class="btn btn-danger">Delete</button>
                                 </form>

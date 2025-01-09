@@ -72,7 +72,7 @@ public class UserController {
 
             User savedUser = userService.registerUser(userDTO);
             log.info("Successfully registered user with email: {}", savedUser.getEmail());
-
+          //  session.setAttribute("userId", user.getId());
             model.addAttribute("userFullName", session.getAttribute("userFullName"));
             return "dashboard";
 

@@ -1,112 +1,145 @@
 package com.quick_park_assist.controller;
 
+import com.quick_park_assist.entity.User;
+import com.quick_park_assist.repository.UserRepository;
+import com.quick_park_assist.service.IReservationService;
+import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import com.quick_park_assist.serviceImpl.ReservationService;
+import com.quick_park_assist.serviceImpl.ReservationServiceImpl;
 import com.quick_park_assist.entity.Reservation;
-
+import org.springframework.expression.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
-
 @Controller
 @RequestMapping("/ev-charging")
 public class ReservationController {
 
     @Autowired
-    private ReservationService reservationService;
-
+    private IReservationService reservationService;
+    @Autowired
+    private UserRepository userRepository;
     @GetMapping("/list")
-    public String listReservations(Model model) {
-        List<Reservation> reservations = reservationService.getAllReservations();
+    public String listReservations(HttpSession session,Model model) {
+        Long loggedInUser = (Long) session.getAttribute("userId");
+        if(loggedInUser == null){
+            return "redirect:/login";
+        }
+        List<Reservation> reservations = reservationService.getReservationsByUserId(loggedInUser);
         
         // Format the reservation time
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        reservations.forEach(reservation -> 
-            reservation.setFormattedReservationTime(reservation.getReservationTime().format(formatter))
-        );
-
         model.addAttribute("reservations", reservations);
-        return "list";
+        return "ViewReservations";
     }
 
     // Show form for adding a new reservation
     @GetMapping("/add")
-    public String addReservationForm(Model model) {
+    public String addReservationForm(HttpSession session, Model model) {
+        Long loggedInUser = (Long) session.getAttribute("userId");
+        if(loggedInUser == null){
+            return "redirect:/login";
+        }
         model.addAttribute("reservation", new Reservation());
         return "addReservation";  // Thymeleaf template 'addReservation.html'
     }
 
     // Process the form for adding a new reservation
     @PostMapping("/add")
-    public String addReservation(Reservation reservation) {
+    public String addReservation(HttpSession session, Reservation reservation) {
+        // Get the logged-in userId from the session
+        Long userId = (Long) session.getAttribute("userId");
+
+        if (userId == null) {
+            return "redirect:/login"; // Redirect to login if the user is not logged in
+        }
+
+        // Fetch the User entity from the database
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Set the user to the bookingSpot
+        reservation.setUser(user);
+
         reservationService.addReservation(reservation);
-        return "redirect:/list";  // After adding, redirect to the reservation list
+        return "redirect:/ev-charging/list";  // After adding, redirect to the reservation list
     }
 
     @GetMapping("/edit")
-    public String editForm(Model model) {
-        model.addAttribute("vehicleNumber", new String()); // empty string to capture the vehicle number
-        return "editForm"; // Template to input vehicle number
-    }
-
-    // Step 2: After submitting the vehicle number, fetch the reservation based on it
-    @PostMapping("/edit")
-    public String findReservationByVehicleNumber(@RequestParam("vehicleNumber") String vehicleNumber, Model model) {
-        // Fetch the reservation from the service based on the vehicle number
-        Reservation reservation = reservationService.findReservationByVehicleNumber(vehicleNumber);
-        
-        // If reservation is not found, return an error message
-        if (reservation == null) {
-            model.addAttribute("error", "Reservation not found for this vehicle number");
-            return "editForm"; // Show the error in the vehicle number input form
+    public String editForm(HttpSession session, Model model) {
+        Long loggedInUser = (Long) session.getAttribute("userId");
+        if(loggedInUser == null){
+            return "redirect:/login";
         }
+        List<Reservation> reservations = reservationService.getReservationsByUserId(loggedInUser);
 
-        // Format the reservation time as needed (for example: yyyy-MM-dd'T'HH:mm)
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-        String formattedDate = reservation.getReservationTime().format(formatter);
-        
-        // Add the formatted date and the reservation object to the model
-        model.addAttribute("formattedReservationTime", formattedDate);
-        model.addAttribute("reservation", reservation); // Add the reservation object to the model
-        
-        return "updateForm"; // Display the update form
+        // Format the reservation time
+
+        model.addAttribute("reservations", reservations);
+        model.addAttribute("vehicleNumber", new String()); // empty string to capture the vehicle number
+        return "EditReservation"; // Template to input vehicle number
+    }
+    @PostMapping("/update-reservation")
+    @Transactional
+    public String updateSpotDetails(
+            @RequestParam(value = "id", required = true) Long id,
+            @RequestParam(value = "startTime", required = true) String startTimeStr,
+            @RequestParam(value = "vehicleNumber", required = true) String vehicleNumber,
+            Model model) {
+        try {
+            // Define a formatter (this format must match your input string)
+            SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+
+            Date startTime = dateTimeFormatter.parse(startTimeStr);
+
+            boolean isUpdated = reservationService.updateSpotDetails(id, startTime, vehicleNumber);
+
+            if (isUpdated) {
+                model.addAttribute("message", "Booking updated successfully!");
+            } else {
+                model.addAttribute("message", "Update failed. Booking ID not found.");
+            }
+        } catch (Exception e) {
+            model.addAttribute("message", "Invalid date format. Please use the correct format.");
+            e.printStackTrace();
+        }
+        return "redirect:/ev-charging/edit";
     }
 
     // Step 3: Handle the form submission for updating the reservation
-    @PostMapping("/update")
-    public String updateReservation(@ModelAttribute Reservation reservation, @RequestParam("reservationTime") String reservationTime, Model model) {
-        // Parse the reservationTime string into a LocalDateTime object
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-        LocalDateTime parsedDate = LocalDateTime.parse(reservationTime, formatter);
-
-        // Update the reservation with the new reservationTime
-        reservation.setReservationTime(parsedDate);
-        
-        // Save the updated reservation
-        reservationService.updateReservation(reservation);
-        
-        // Redirect to the list of reservations after successful update
-        return "redirect:/list";
-    }
-    
     // Show the delete reservation form
     @GetMapping("/delete-form")
-    public String showDeleteForm() {
-        return "delete-formhtml";  // Return the delete form page
+    public String showDeleteForm(HttpSession session, Model model) {
+        Long loggedInUser = (Long) session.getAttribute("userId");
+        if(loggedInUser == null){
+            return "redirect:/login";
+        }
+        List<Reservation> reservations = reservationService.getReservationsByUserId(loggedInUser);
+
+        model.addAttribute("reservations", reservations);
+        return "CancelReservation";
     }
 
     // Handle the form submission to delete the reservation
     
     
     
-    @PostMapping("/delete")
-    public String deleteReservation(@RequestParam("vehicleNumber") String vehicleNumber) {
+    @PostMapping("/delete/{id}")
+    public String deleteReservation(@RequestParam("id") Long id, Model model) {
         // Call service to delete the reservation based on vehicle number
-        reservationService.deleteReservationByVehicleNumber(vehicleNumber);
-        return "redirect:/list";  // Redirect to the reservation list after deletion
+       boolean isDeleted =  reservationService.deleteReservationById(id);
+       if(isDeleted){
+           model.addAttribute("message","Reservation Successfully Cancelled");
+           return "success";
+       }
+        model.addAttribute("message","Reservation Couldn't be Cancelled");
+
+        return "/ev-charging/delete-form";  // Redirect to the reservation list after deletion
     }
 
 

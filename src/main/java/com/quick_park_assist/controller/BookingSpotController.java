@@ -133,4 +133,17 @@ public class BookingSpotController {
         // Return the success page view
         return "success";
     }
+    @GetMapping("/get-price-per-hour")
+    @ResponseBody
+    public Map<String, Object> getPricePerHour(@RequestParam("spotId") Long spotId) {
+        Optional<ParkingSpot> parkingSpot = parkingSpotRepository.findById(spotId);
+        if (parkingSpot.isPresent()) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("pricePerHour", parkingSpot.get().getPricePerHour());
+            return response;
+        } else {
+            throw new RuntimeException("Parking spot not found");
+        }
+    }
+
 }

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
@@ -13,7 +12,53 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- CSS file -->
     <link rel="stylesheet"  type="text/css" th:href="@{/css/style.css}">
-    <title>Smart Parking - EditProfile</title>
+    <title>Addon-services</title>
+    <style>
+    .content {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .content h1 {
+            font-size: 2rem;
+            color: #004080;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #004080;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        button {
+            color: red;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body th:style="'background: linear-gradient( rgb(0 14 38  / 70%), rgba(6 26 79 / 48%)),
                 url('+ @{/images/bgImage.jpg }+') no-repeat center center/cover; background-attachment:fixed;'">
@@ -39,7 +84,7 @@
                     <a class="nav-link text-dark" th:href="@{/bookingSpot/}">BOOKING</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" th:href="@{/addon/new}">ADDON SERVICES</a>
+                    <a class="nav-link text-dark" th:href="@{/addon/all}">ADDON SERVICES</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark" th:href="@{/ev-charging/list}">EV CHARGING</a>
@@ -57,61 +102,53 @@
     <div class="main-row" style="border-radius:5px;s">
         <!-- Menu Section -->
         <div class="col-md-3 sidebar">
-            <center><h2 class="text-light"> Menu </h2></center>
+            <center><h2 class="text-light">Menu</h2></center>
             <div class="menu-btns">
-                <a th:href="@{/dashboard}">OverView</a>
-                <a th:href="@{/profile/edit}" class="fw-bold fst-italic">Update Profile</a>
-                <a th:href="@{/vehicles/add}">Add Vehicle</a>
-               <a th:href="@{/vehicles/editVehicle}">Modify User Vehicle Info</a>
-                <a th:href="@{/profileAction}">Delete User Account</a>
-                <a th:href="@{/logout}">  Logout </a>
+                <a th:href="@{/addon/new}">Create New Addon Pack</a>
+                <a th:href="@{/addon/modify-duration}">Modify Addon Details</a>
+                <a th:href="@{/addon/all}">View All Addon Offers</a>
+                <a th:href="@{/addon/view}">View Addons for a Vehicle</a>
+                <a th:href="@{/addon/delete}">Remove an Addon Pack</a>
             </div>
         </div>
 
         <!-- Form Section -->
         <div class="col bg-light formSection">
-            <center><h3 class="text-center bg-primary text-light w-100" style="padding:10px; border-radius:5px">Your Profile</h3></center>
-            <div class="card-body card">
-                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+            <center><h3 class="text-center bg-primary text-light" style="padding:10px; border-radius:4px">Enhance Your Parking Experience with Our Addon Services</h3></center>
 
-                <form th:action="@{/profile/update}" th:object="${userProfile}" method="post">
-                    <div class= "form-group mb-3">
-                        <label for="fullName" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="fullName" th:field="*{fullName}">
-                        <span class="text-danger" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" th:field="*{email}">
-                        <span class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="phoneNumber" class="form-label">Phone Number</label>
-                        <input type="text" class="form-control" id="phoneNumber" th:field="*{phoneNumber}">
-                        <span class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="address" class="form-label">Address</label>
-                        <textarea class="form-control" id="address" th:field="*{address}" rows="3"></textarea>
-                        <span class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary me-4">Confirm Changes</button>
-                    <a href="/profile" class="btn btn-secondary">Cancel</a>
-                </form>
-            </div>
-        </div>
+           <div class="content">
+        <h1>Delete Addon Services</h1>
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Duration</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="addon : ${addons}">
+                <td th:text="${addon.name}"></td>
+                <td th:text="${addon.price}"></td>
+                <td th:text="${addon.duration}"></td>
+                <td>
+                    <!-- Delete button -->
+                    <form th:action="@{'/addon/delete/' + ${addon.id}}" method="post" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
+    </div>
+</div>
 </div>
 <footer class="text-center">
     &copy; 2024 All Rights Reserved by Smart Parking Spots
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
-

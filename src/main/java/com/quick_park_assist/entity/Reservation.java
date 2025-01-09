@@ -2,13 +2,12 @@ package com.quick_park_assist.entity;
 
 
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
-@Table(name = "reservations", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"chargingStation", "reservationTime"})
-})
+@Table(name = "reservations")
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,36 +16,24 @@ public class Reservation {
     private String name;
     private String vehicleNumber;
     private String chargingStation;
-    public String getSlot() {
-		return Slot;
-	}
-
-	public void setSlot(String slot) {
-		Slot = slot;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	private String Slot ;
+   @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+    private String Slot ;
     private String status;
-    private LocalDateTime reservationTime;
-    private String formattedReservationTime;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private Date reservationTime;
 
     // Getters and setters
-
-    public String getFormattedReservationTime() {
-        return formattedReservationTime;
+    public User getUser() {
+        return user;
     }
 
-    public void setFormattedReservationTime(String formattedReservationTime) {
-        this.formattedReservationTime = formattedReservationTime;
+    public void setUser(User user) {
+        this.user = user;
     }
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -80,12 +67,29 @@ public class Reservation {
         this.chargingStation = chargingStation;
     }
 
-    public LocalDateTime getReservationTime() {
+    public Date getReservationTime() {
         return reservationTime;
     }
 
-    public void setReservationTime(LocalDateTime reservationTime) {
+    public void setReservationTime(Date reservationTime) {
         this.reservationTime = reservationTime;
     }
+
+    public String getSlot() {
+        return Slot;
+    }
+
+    public void setSlot(String slot) {
+        Slot = slot;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
 }
 

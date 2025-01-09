@@ -29,16 +29,10 @@
                 <li class="nav-item">
                     <a class="nav-link text-dark" th:href="@{/}" aria-current="page">HOME</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        REGISTER
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" th:href="@{/register}">Register</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" th:href="@{/login}">Login</a></li>
-                    </ul>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" th:href="@{/dashboard}">DASHBOARD</a>
                 </li>
+
                 <li class="nav-item">
                     <a class="nav-link text-dark" th:href="@{/smart-spots/add-spot}">SMARTSPOTS</a>
                 </li>
@@ -46,7 +40,7 @@
                     <a class="nav-link text-dark" th:href="@{/bookingSpot/}">BOOKING</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" th:href="@{/addon-services}">ADDON SERVICES</a>
+                    <a class="nav-link text-dark" th:href="@{/addon/new}">ADDON SERVICES</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark" th:href="@{/ev-charging/list}">EV CHARGING</a>
@@ -82,7 +76,7 @@
                 <div class="card-body">
                     <form th:action="@{/vehicles/new-vehicle}" th:object="${vehicle}" method="post">
                        <div>
-                           <div class="col-mb-3">
+                           <div class="form-group mb-3">
                                <label for="vehicleNumber" class="form-label">Vehicle Number</label>
                                <input type="text" class="form-control" id="vehicleNumber"
                                       th:field="*{vehicleNumber}" placeholder="Format: XX-99-XX-9999">
@@ -91,7 +85,7 @@
                                     th:errors="*{vehicleNumber}"></div>
                            </div>
 
-                           <div class="col-mb-3">
+                           <div class="form-group mb-3">
                                <label for="vehicleType" class="form-label">Vehicle Type</label>
                                <select class="form-control" id="vehicleType" th:field="*{vehicleType}">
                                    <option value="">Select Vehicle Type</option>
@@ -104,7 +98,7 @@
                                     th:errors="*{vehicleType}"></div>
                            </div>
 
-                           <div class="col-mb-3">
+                           <div class="form-group mb-3">
                                <label for="manufacturer" class="form-label">Manufacturer</label>
                                <input type="text" class="form-control" id="manufacturer"
                                       th:field="*{manufacturer}">
@@ -113,7 +107,7 @@
                                     th:errors="*{manufacturer}"></div>
                            </div>
 
-                           <div class="col-mb-3">
+                           <div class="form-group mb-3">
                                <label for="model" class="form-label">Model</label>
                                <input type="text" class="form-control" id="model"
                                       th:field="*{model}">
@@ -122,7 +116,7 @@
                                     th:errors="*{model}"></div>
                            </div>
 
-                           <div class="col-mb-3">
+                           <div class="form-group mb-3">
                                <label for="color" class="form-label">Color</label>
                                <input type="text" class="form-control" id="color"
                                       th:field="*{color}">
@@ -134,9 +128,13 @@
 
                        </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">Add Vehicle</button>
-                            <a href="/vehicles" class="btn btn-secondary">Cancel</a>
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-primary">Add Vehicle</button>
+                            </div>
+                            <div class="col-6">
+                                <a href="/vehicles" class="btn btn-secondary">Cancel</a>
+                            </div>
                         </div>
                     </form>
                 </div>
