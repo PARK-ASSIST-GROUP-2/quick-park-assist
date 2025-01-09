@@ -30,8 +30,6 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/bookingSpot/")
 public class BookingSpotController {
 
-	@Autowired
-    private IBookingSpotService IbookingSpotService;
     @Autowired
     private IParkingSpotService parkingSpotService;
     @Autowired
@@ -128,7 +126,7 @@ public class BookingSpotController {
         bookingSpot.setSpotId(parkingSpot);
 
         // Save the booking details
-        IbookingSpotService.saveBookingSpot(bookingSpot);
+        bookingSpotRepository.save(bookingSpot);
 
         // Generate a success message based on the action
         String successMessage = "Your Booking is Successful!";
