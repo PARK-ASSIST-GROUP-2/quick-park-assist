@@ -1,24 +1,30 @@
 package com.quick_park_assist.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.quick_park_assist.entity.BookingSpot;
 import com.quick_park_assist.entity.ParkingSpot;
 import com.quick_park_assist.entity.User;
-import com.quick_park_assist.enums.BookingSpotStatus;
 import com.quick_park_assist.repository.BookingSpotRepository;
 import com.quick_park_assist.repository.ParkingSpotRepository;
 import com.quick_park_assist.repository.UserRepository;
 import com.quick_park_assist.service.IParkingSpotService;
-import com.quick_park_assist.service.IUpdateParkingSpotService;
+
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import com.quick_park_assist.entity.BookingSpot;
-import com.quick_park_assist.service.IBookingSpotService;
-
-import java.util.*;
 
 @Controller
 @RequestMapping("/bookingSpot/")
